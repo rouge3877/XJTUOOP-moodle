@@ -1,0 +1,7 @@
+# Ignore everything except .cpp and .h files
+*
+
+# Except the following file types
+!.gitignore
+!*.cpp
+!*.h
