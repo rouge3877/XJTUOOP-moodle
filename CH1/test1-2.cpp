@@ -39,7 +39,7 @@ int main()
     std::cin >> a >> b >> c;
     TriOrder::ascd(a, b, c);
 
-    std::cout << a << b << c << std::endl;
+    std::cout << a << " " << b << " " << c << std::endl;
     return 0;
 }
 

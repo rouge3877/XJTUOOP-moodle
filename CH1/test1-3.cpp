@@ -32,23 +32,30 @@ char* name=new char[4]{'a','b','c',0};（moodle支持这种初始化，但像vs�
 注意，在输出char*指针变量的值时，需要将其强制转换为void*
 */
 
+
 #include <iostream>
+#include <cstring>
 
 int main() {
-    const char* p = "abc";
+
+    const char* p = (char*)"abc";
     std::cout << p << std::endl;
 
-    const char* q = "def";
-    std::cout << q << " " << sizeof(q) << std::endl;
+    const int length = std::strlen("def") + 1 + 1;
+    char* q = new char[length]{'d', 'e', 'f', '\0'};
 
-    char* name = new char[4]{'a', 'b', 'c', 0};
-    std::cout << name << std::endl;
 
-    char c;
-    std::cin >> c;
-    name[3] = c;
-    std::cout << name << std::endl;
+    std::cout << q << " " << length << std::endl;
 
-    delete[] name;
+
+    std::strncpy(q, p, std::strlen(p));
+
+    char add_char;
+    std::cin >> add_char;
+    q[3] = add_char;
+    q[4] = 0;
+    std::cout << q << std::endl;
+
+    delete[] q;
     return 0;
 }
