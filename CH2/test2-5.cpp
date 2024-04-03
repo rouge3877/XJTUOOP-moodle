@@ -42,7 +42,7 @@ public:
     this->name = new char[strlen(get_name)+1];
     strcpy(this->name, (char*)get_name);
     this->g1 = get_g1;
-    this->g2 = get_g1;
+    this->g2 = get_g2;
     std::cout << "construct " << get_name << std::endl;
     return;
   }
@@ -79,13 +79,11 @@ public:
 
 int main(){
   Student a("li", 90.0, 80.0);
-  Student st[2] = {Student("zhang", 80.0, 70.0), Student("wang", 90.0, 80.0)};
-  std::cout << (st[0].get_score1() + st[0].get_score2())/2 << std::endl;
+  Student* st = new Student[2]{Student("zhang", 80.0, 70.0), Student("wang", 90.0, 80.0)};
+  std::cout << (st[0].get_score1() + st[0].get_score2())/2 << ' ';
   std::cout << (st[1].get_score1() + st[1].get_score2())/2 << std::endl;
+  delete[] st; 
   Student b = a;
-  std::cout << *b - b.get_address() << std::endl;
-
-
-
-
+  std::cout << &b - b.get_address() << std::endl;
+  return 0 ;
 }
