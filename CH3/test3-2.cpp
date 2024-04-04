@@ -1,90 +1,93 @@
 /* 3.2 实验： 研究C++的对象模型 */
 
-/*
-1、定义一个类，其中有静态数据成员、各种类型非静态数据成员（含字符指针），
-    甚至包括引用（可选），静态和非静态成员函数（含分配空间的构造函数、析构函数）。
-2、定义全局对象、main函数中局部对象、另一个被main调用的外部函数func中定义局部对象
-    （可以是形参）、main函数中动态创建对象，每种对象至少2个。观察、分析各种对象地址。
-3、输出对象中各个静态与非静态数据成员的值、地址、对象的存储空间大小等信息。
-    由此理解对象的本质、静态数据成员是本类对象共享一份拷贝等问题。此外，应观察对齐现象。
-4、（可选）输出对象的每个字节，以揭示引用的实现方法。
-5、对于上述各种对象，输出静态、非静态成员函数地址，以及main、func等外部函数的地址，并分析。
-    要求采用合理方法，避免编译器提出警告。
-
-注意：本题作为实验报告内容，要求有代码、注释、结果截图及分析。
-以班为单位统一收，电子版，发我的邮箱libaohong32@163.com
-*/
+// 1、定义一个类，其中有静态数据成员、各种类型非静态数据成员（含字符指针），甚至包括引用（可选），
+//     静态和非静态成员函数（含分配空间的构造函数、析构函数）。
+// 2、定义全局对象、main函数中局部对象、另一个被main调用的外部函数func中定义局部对象（可以是形参）、
+//     main函数中动态创建对象，每种对象至少2个。观察、分析各种对象地址。
+// 3、输出对象中各个静态与非静态数据成员的值、地址、对象的存储空间大小等信息。由此理解对象的本质、
+//     静态数据成员是本类对象共享一份拷贝等问题。此外，应观察对齐现象。
+// 4、（可选）输出对象的每个字节，以揭示引用的实现方法。
+// 5、对于上述各种对象，输出静态、非静态成员函数地址，以及main、func等外部函数的地址，并分析。
+//     要求采用合理方法，避免编译器提出警告。
 
 #include <iostream>
-#include <cstring>
 
 class MyClass {
 public:
-    static int staticData;
-    int nonStaticData;
-    char* charPointer;
-    int& refData;
+    // Static data members
+    static int staticInt;
+    static double staticDouble;
+    static char staticChar;
 
-    MyClass() : refData(nonStaticData) {
-        charPointer = new char[10];
-        strcpy(charPointer, "Example");
-    }
+    // Non-static data members
+    int intVar;
+    double doubleVar;
+    char* charPtr;
+    int& intRef;
 
-    MyClass(int value) : refData(nonStaticData) {
-        nonStaticData = value;
-        charPointer = new char[10];
-        strcpy(charPointer, "Example");
-    }
+    // Constructor
+    MyClass(int i, double d, char* c, int& ref) : intVar(i), doubleVar(d), charPtr(c), intRef(ref) {}
 
-    ~MyClass() {
-        delete[] charPointer;
+    // Destructor
+    ~MyClass() {}
+
+    // Member functions
+    void printValues() {
+        std::cout << "intVar: " << intVar << ", Address: " << &intVar << std::endl;
+        std::cout << "doubleVar: " << doubleVar << ", Address: " << &doubleVar << std::endl;
+        std::cout << "charPtr: " << charPtr << ", Address: " << static_cast<void*>(charPtr) << std::endl;
+        std::cout << "intRef: " << intRef << ", Address: " << &intRef << std::endl;
     }
 
     static void staticFunction() {
-        std::cout << "Static function called" << std::endl;
+        std::cout << "Static Function Address: " << &staticFunction << std::endl;
     }
 
     void nonStaticFunction() {
-        std::cout << "Non-static function called" << std::endl;
+        std::cout << "Non-Static Function Address: ";
+        
     }
 };
 
-int MyClass::staticData = 0;
+// Static member initialization
+int MyClass::staticInt = 10;
+double MyClass::staticDouble = 3.14;
+char MyClass::staticChar = 'A';
 
-void externalFunction(MyClass obj) {
-    std::cout << "External function called" << std::endl;
+// External function
+void externalFunction() {
+    std::cout << "External Function Address: " << &externalFunction << std::endl;
 }
-    MyClass globalObj;
+
 int main() {
+    int x = 5;
+    int y = 10;
+    char str[] = "Hello";
+
     // Global object
+    MyClass globalObj(1, 2.5, str, x);
+    globalObj.printValues();
 
-    std::cout << "Global object address: " << &globalObj << std::endl;
+    // Local objects in main
+    MyClass localObj1(3, 4.5, str, y);
+    localObj1.printValues();
 
-    // Local object in main
-    MyClass localObj(10);
-    std::cout << "Local object in main address: " << &localObj << std::endl;
+    // Local objects in external function
+    externalFunction();
 
-    // Call external function with local object as argument
-    externalFunction(localObj);
+    // Dynamic objects
+    MyClass* dynamicObj1 = new MyClass(6, 7.5, str, x);
+    dynamicObj1->printValues();
+    MyClass* dynamicObj2 = new MyClass(8, 9.5, str, y);
+    dynamicObj2->printValues();
 
-    // Dynamic object creation
-    MyClass* dynamicObj = new MyClass;
-    std::cout << "Dynamic object address: " << dynamicObj << std::endl;
+    // Call static and non-static member functions
+    MyClass::staticFunction();
+    globalObj.nonStaticFunction();
 
-    // Output member values, addresses, and sizes
-    std::cout << "Static data member value: " << MyClass::staticData << std::endl;
-    std::cout << "Non-static data member value: " << localObj.nonStaticData << std::endl;
-    std::cout << "Character pointer value: " << localObj.charPointer << std::endl;
-    std::cout << "Reference data member value: " << localObj.refData << std::endl;
+    // Cleanup
+    delete dynamicObj1;
+    delete dynamicObj2;
 
-    std::cout << "Size of MyClass object: " << sizeof(MyClass) << std::endl;
-
-    // Output addresses of member functions
-    std::cout << "Address of static function: " << &MyClass::staticFunction << std::endl;
-    std::cout << "Address of non-static function: " << &(localObj.nonStaticFunction) << std::endl;
-    std::cout << "Address of main function: " << (void*)main << std::endl;
-    std::cout << "Address of external function: " << (void*)externalFunction << std::endl;
-
-    delete dynamicObj;
     return 0;
 }
