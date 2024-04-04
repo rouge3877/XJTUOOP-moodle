@@ -17,3 +17,74 @@
 
 #include <iostream>
 #include <cstring>
+
+class MyClass {
+public:
+    static int staticData;
+    int nonStaticData;
+    char* charPointer;
+    int& refData;
+
+    MyClass() : refData(nonStaticData) {
+        charPointer = new char[10];
+        strcpy(charPointer, "Example");
+    }
+
+    MyClass(int value) : refData(nonStaticData) {
+        nonStaticData = value;
+        charPointer = new char[10];
+        strcpy(charPointer, "Example");
+    }
+
+    ~MyClass() {
+        delete[] charPointer;
+    }
+
+    static void staticFunction() {
+        std::cout << "Static function called" << std::endl;
+    }
+
+    void nonStaticFunction() {
+        std::cout << "Non-static function called" << std::endl;
+    }
+};
+
+int MyClass::staticData = 0;
+
+void externalFunction(MyClass obj) {
+    std::cout << "External function called" << std::endl;
+}
+    MyClass globalObj;
+int main() {
+    // Global object
+
+    std::cout << "Global object address: " << &globalObj << std::endl;
+
+    // Local object in main
+    MyClass localObj(10);
+    std::cout << "Local object in main address: " << &localObj << std::endl;
+
+    // Call external function with local object as argument
+    externalFunction(localObj);
+
+    // Dynamic object creation
+    MyClass* dynamicObj = new MyClass;
+    std::cout << "Dynamic object address: " << dynamicObj << std::endl;
+
+    // Output member values, addresses, and sizes
+    std::cout << "Static data member value: " << MyClass::staticData << std::endl;
+    std::cout << "Non-static data member value: " << localObj.nonStaticData << std::endl;
+    std::cout << "Character pointer value: " << localObj.charPointer << std::endl;
+    std::cout << "Reference data member value: " << localObj.refData << std::endl;
+
+    std::cout << "Size of MyClass object: " << sizeof(MyClass) << std::endl;
+
+    // Output addresses of member functions
+    std::cout << "Address of static function: " << &MyClass::staticFunction << std::endl;
+    std::cout << "Address of non-static function: " << &(localObj.nonStaticFunction) << std::endl;
+    std::cout << "Address of main function: " << (void*)main << std::endl;
+    std::cout << "Address of external function: " << (void*)externalFunction << std::endl;
+
+    delete dynamicObj;
+    return 0;
+}
