@@ -10,6 +10,7 @@
 !*.c
 !*.C
 !*.txt
+!*.output
 
 # Except directories
 !*/
